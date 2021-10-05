@@ -18,7 +18,7 @@ namespace PlatformService.Data
         {
             if (!context.Platforms.Any())
             {
-                Console.WriteLine("Seeding Platforms");
+                Console.WriteLine("-------> Seeding Platforms");
                 context.Platforms.AddRange(
                     new Platform() { Name = "Dot Net", Publisher = "Microsoft", Cost = "Free" },
                     new Platform() { Name = "Java", Publisher = "Oracle", Cost = "Free" },
