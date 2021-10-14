@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using PlatformService;
 using PlatformService.Data;
 using PlatformService.SyncDataServives.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//Add services to the container.
 if (builder.Environment.IsProduction())
 {
-    Console.WriteLine("Using SQL Server Db");
-    builder.Services.AddDbContext<AppDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("PlatformsConn")));
+    Console.WriteLine("----> Using SQL Server Db");
+builder.Services.AddDbContext<AppDbContext>(opt =>
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("PlatformsConn"), options => options.MigrationsAssembly("PlatformService")));
 }
 else
 {
@@ -44,5 +45,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-PrepDb.PrepPopulation(app);
+PrepDb.PrepPopulation(app, builder.Environment.IsProduction());
 app.Run();

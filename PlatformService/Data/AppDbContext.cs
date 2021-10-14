@@ -1,16 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using PlatformService.Models;
 
-namespace PlatformService.Data
+namespace PlatformService
 {
-    public partial class AppDbContext : DbContext
+    public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-
-        }
         public DbSet<Platform> Platforms { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(@"Server=localhost,1433;Database=platformsdb;Persist Security Info=True;User ID=sa;Password=pa55w0rd!;");
+        }
     }
-
-
 }
