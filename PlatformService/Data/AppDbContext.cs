@@ -7,9 +7,8 @@ namespace PlatformService
     {
         public DbSet<Platform> Platforms { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer(@"Server=localhost,1433;Database=platformsdb;Persist Security Info=True;User ID=sa;Password=pa55w0rd!;");
         }
     }
 }
