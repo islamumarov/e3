@@ -1,6 +1,7 @@
 using AutoMapper;
 using CommandsService.Data;
 using CommandsService.Dtos;
+using CommandsService.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CommandsService.Controllers
@@ -21,7 +22,8 @@ namespace CommandsService.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<CommandReadDto>> GetCommandsForPlatform(int platformId)
         {
-            if(!_repo.PlatformExists(platformId))
+            Console.WriteLine($"---------> Hiiiiittteeedd  {platformId} ");
+            if (!_repo.PlatformExists(platformId))
             {
                 return NotFound();
             }
@@ -29,5 +31,40 @@ namespace CommandsService.Controllers
 
             return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commands));
         }
+
+        [HttpGet("{commandId}", Name = "GetCommandForPlatform")]
+        public ActionResult<CommandReadDto> GetCommandForPlatform(int platformId, int commandId)
+        {
+            Console.WriteLine($"---------> Hit GetCommandForPlatform  {platformId} / {commandId}");
+            if (!_repo.PlatformExists(platformId))
+            {
+                return NotFound();
+            }
+            var command = _repo.GetCommand(platformId, commandId);
+            if (command == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<CommandReadDto>(command));
+        }
+
+        [HttpPost]
+        public ActionResult<CommandReadDto> CreateCommandForPlatform(int platformId, CommandCreateDto commandCreateDto)
+        {
+            Console.WriteLine($"---------> Hit CreateCommandForPlatform  {platformId} / {commandCreateDto.CommandLine}");
+            if (!_repo.PlatformExists(platformId))
+            {
+                return NotFound();
+            }
+            var commandModel = _mapper.Map<Command>(commandCreateDto);
+            _repo.CreateCommand(platformId, commandModel);
+            _repo.SaveChanges();
+
+            var commandReadDto = _mapper.Map<CommandReadDto>(commandModel);
+
+            return CreatedAtRoute(nameof(GetCommandForPlatform),
+            new { platformId, commandId = commandReadDto.Id }, commandReadDto);
+        }
+
     }
 }
